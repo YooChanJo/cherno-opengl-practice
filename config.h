@@ -1,4 +1,3 @@
-#pragma once
 #ifndef CONFIG_H
 #define CONFIG_H
 
@@ -21,7 +20,9 @@ namespace ProjectConfig {
     };
     
     std::string cppFiles[] = { // with extension
-        "main.cpp",
+        "Main.cpp",
+        "VertexBuffer.cpp",
+        "IndexBuffer.cpp",
     };
     std::string customLibs[] = {
         "glfw3",

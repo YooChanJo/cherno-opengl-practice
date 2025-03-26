@@ -11,6 +11,8 @@
 
 // Custom Headers
 #include "../config.h" // in real life this needs its own file and functionality
+#include "../includes/IndexBuffer.h"
+#include "../includes/VertexBuffer.h"
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -116,66 +118,77 @@ int main()
         return 0;
     }
     // std::cout << glGetString(GL_VERSION) << std::endl;
-
-    float positions[] = {
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
-        -0.5f,  0.5f,
-    };
-
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-    };
-
-    unsigned vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    unsigned int buffer;
-    glGenBuffers(1, &buffer); // generator one buffer
-    glBindBuffer(GL_ARRAY_BUFFER, buffer); // activate that buffer
-    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW); // bind data of 6 * sizeof(float) of position and this is only going to be rendered once with not modifications
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-    // 0th attribute for each 2 * sizeof(float) strides start from offset 0 counting 2 elements size of GL_FLOAT
-    // links buffer with vao
-
-    unsigned int ibo;
-    glGenBuffers(1, &ibo); // generator one buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // activate that buffer
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * 2 * sizeof(unsigned int), indices, GL_STATIC_DRAW); // bind data of 6 * sizeof(float) of position and this is only going to be rendered once with not modifications
-    
-    ShaderProgramSource source = parseShader(ProjectConfig::projectDir + "shaders/basic.shader");
-    
-    unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
-    glUseProgram(shader);
-
-    int location = glGetUniformLocation(shader, "u_Color");
-    if(location == -1) std::cout << "Uniform named u_Color not found" << std::endl;
-    
-    std::time_t start = std::clock();
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        // my code
-        glUniform4f(location, timeOscillator(start, 3), timeOscillator(start, 4), timeOscillator(start, 5), 1.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        float positions[] = {
+            -0.5f, -0.5f,
+            0.5f, -0.5f,
+            0.5f,  0.5f,
+            -0.5f,  0.5f,
+        };
 
-        
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+        unsigned int indices[] = {
+            0, 1, 2,
+            2, 3, 0,
+        };
 
-        /* Poll for and process events */
-        glfwPollEvents();
+        unsigned vao;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+
+        VertexBuffer vb(positions, 6 * 2 * sizeof(float));
+
+        // unsigned int buffer;
+        // glGenBuffers(1, &buffer); // generator one buffer
+        // glBindBuffer(GL_ARRAY_BUFFER, buffer); // activate that buffer
+        // glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW); // bind data of 6 * sizeof(float) of position and this is only going to be rendered once with not modifications
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+        // 0th attribute for each 2 * sizeof(float) strides start from offset 0 counting 2 elements size of GL_FLOAT
+        // links buffer with vao
+
+        IndexBuffer ib(indices, 6);
+        // unsigned int ibo;
+        // glGenBuffers(1, &ibo); // generator one buffer
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // activate that buffer
+        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * 2 * sizeof(unsigned int), indices, GL_STATIC_DRAW); // bind data of 6 * sizeof(float) of position and this is only going to be rendered once with not modifications
+        
+        ShaderProgramSource source = parseShader(ProjectConfig::projectDir + "shaders/basic.shader");
+        
+        unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
+        glUseProgram(shader);
+
+        int location = glGetUniformLocation(shader, "u_Color");
+        if(location == -1) std::cout << "Uniform named u_Color not found" << std::endl;
+        
+        std::time_t start = std::clock();
+        vb.Bind();
+        ib.Bind();
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window))
+        {
+            /* Render here */
+            glClear(GL_COLOR_BUFFER_BIT);
+            
+            // my code
+            glUniform4f(
+                location,
+                timeOscillator(start, 3),
+                timeOscillator(start, 4),
+                timeOscillator(start, 5),
+                1.0f
+            );
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+            
+            /* Swap front and back buffers */
+            glfwSwapBuffers(window);
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
+
+        glDeleteProgram(shader);
     }
-
-    glDeleteProgram(shader);
-
     glfwTerminate();
     return 0;
 }
