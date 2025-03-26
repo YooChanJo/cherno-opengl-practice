@@ -13,6 +13,7 @@
 #include "../config.h" // in real life this needs its own file and functionality
 #include "../includes/IndexBuffer.h"
 #include "../includes/VertexBuffer.h"
+#include "../includes/VertexArray.h"
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -131,9 +132,10 @@ int main()
             2, 3, 0,
         };
 
-        unsigned vao;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+        VertexArray va;
+        // unsigned vao;
+        // glGenVertexArrays(1, &vao);
+        // glBindVertexArray(vao);
 
         VertexBuffer vb(positions, 6 * 2 * sizeof(float));
 
@@ -141,8 +143,12 @@ int main()
         // glGenBuffers(1, &buffer); // generator one buffer
         // glBindBuffer(GL_ARRAY_BUFFER, buffer); // activate that buffer
         // glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW); // bind data of 6 * sizeof(float) of position and this is only going to be rendered once with not modifications
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
+        // glEnableVertexAttribArray(0);
+        // glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
         // 0th attribute for each 2 * sizeof(float) strides start from offset 0 counting 2 elements size of GL_FLOAT
         // links buffer with vao
 
@@ -161,7 +167,7 @@ int main()
         if(location == -1) std::cout << "Uniform named u_Color not found" << std::endl;
         
         std::time_t start = std::clock();
-        vb.Bind();
+        va.Bind();
         ib.Bind();
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
