@@ -25,6 +25,7 @@ namespace ProjectConfig {
         "IndexBuffer.cpp",
         "VertexBufferLayout.cpp",
         "VertexArray.cpp",
+        "Shader.cpp",
     };
     std::string customLibs[] = {
         "glfw3",
