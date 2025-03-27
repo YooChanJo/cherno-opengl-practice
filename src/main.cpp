@@ -13,6 +13,7 @@
 #include "../includes/VertexBuffer.h"
 #include "../includes/VertexArray.h"
 #include "../includes/Shader.h"
+#include "../includes/Renderer.h"
 
 static float timeOscillator(std::time_t start, int rate) { // rate in milliseconds
     int timeVal = ((std::clock() - start) / rate) % 512;
@@ -91,21 +92,25 @@ int main()
         // unsigned int shader = createShader(source.vertexSource, source.fragmentSource);
         // glUseProgram(shader);
         Shader shader("./shaders/basic.shader");
-        shader.Bind();
+        
+        va.Unbind();
+        vb.Unbind();
+        ib.Unbind();
+        shader.Unbind();
 
         // int location = glGetUniformLocation(shader, "u_Color");
         // if(location == -1) std::cout << "Uniform named u_Color not found" << std::endl;
         
         std::time_t start = std::clock();
-        va.Bind();
-        ib.Bind();
+        Renderer renderer;
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
-            glClear(GL_COLOR_BUFFER_BIT);
+            renderer.Clear();
+            // glClear(GL_COLOR_BUFFER_BIT);
             
-            shader.SetUniform4f("u_Color", timeOscillator(start, 4), 0.0f, 1.0f, 1.0f);
+            shader.SetUniform4f("u_Color", timeOscillator(start, 4), timeOscillator(start, 5), 1.0f, 1.0f);
             // my code
             // glUniform4f(
             //     location,
@@ -114,9 +119,10 @@ int main()
             //     timeOscillator(start, 5),
             //     1.0f
             // );
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+            renderer.Draw(va, ib, shader);
+            // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-            
+
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
 
