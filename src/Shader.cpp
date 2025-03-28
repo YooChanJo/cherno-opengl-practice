@@ -1,5 +1,6 @@
 // OpenGL
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 // STD Headers
 #include <iostream>
@@ -96,6 +97,9 @@ void Shader::Unbind() const {
 }    
 
 // set uniforms
+void Shader::SetUniform1i(const std::string& name, int value) {
+    glUniform1i(GetUniformLocation(name), value);
+}
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }    
