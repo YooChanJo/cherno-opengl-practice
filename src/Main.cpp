@@ -66,14 +66,15 @@ int main()
         VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
-        layout.Push<float>(2);
+        layout.Push<float>(2); // position
+        layout.Push<float>(2); // texture coord
         va.AddBuffer(vb, layout); // need addition in layout
 
         IndexBuffer ib(indices, 6);
         Shader shader("./shaders/basic.shader");
         shader.Bind();
 
-        Texture texture("./res/textures/diff_equations.png");
+        Texture texture("./res/textures/broken_violin.jpg");
         texture.Bind(); // binding texture to slot 0
         shader.SetUniform1i("u_Texture", 0); // texture slot 0
         

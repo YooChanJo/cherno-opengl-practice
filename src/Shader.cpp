@@ -35,7 +35,6 @@ ShaderProgramSource Shader::ParseShader(const std::string& filePath) {
             ss[(int)type] << line << "\n";
         }
     }
-
     return { ss[0].str(), ss[1].str() };
 }
 
@@ -106,7 +105,6 @@ void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
 
 int Shader::GetUniformLocation(const std::string& name) {
     if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) return m_UniformLocationCache[name];
-
     int location =  glGetUniformLocation(m_RendererID, name.c_str());
     if(location == -1) std::cout << "Warning: uniform with " + name << " does not exist" << std::endl;
     
