@@ -2,6 +2,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+// vender
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 // STD Headers
 #include <iostream>
 #include <string>
@@ -16,11 +20,10 @@
 #include "../includes/Renderer.h"
 #include "../includes/Texture.h"
 
-static float timeOscillator(std::time_t start, int rate) { // rate in milliseconds
-    int timeVal = ((std::clock() - start) / rate) % 512;
-    return timeVal < 255 ? static_cast<float>(timeVal) / 255 : static_cast<float>(511 - timeVal) / 255;
-}
-
+// static float timeOscillator(std::time_t start, int rate) { // rate in milliseconds
+//     int timeVal = ((std::clock() - start) / rate) % 512;
+//     return timeVal < 255 ? static_cast<float>(timeVal) / 255 : static_cast<float>(511 - timeVal) / 255;
+// }
 
 int main()
 {
@@ -77,16 +80,19 @@ int main()
         Shader shader("./shaders/basic.shader");
         shader.Bind();
 
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        shader.SetUnifromMat4f("u_MVP", proj);
+
+        
         Texture texture("./res/textures/broken_violin.jpg");
         texture.Bind(); // binding texture to slot 0
         shader.SetUniform1i("u_Texture", 0); // texture slot 0
         
-        // va.Unbind();
-        // vb.Unbind();
-        // ib.Unbind();
-        // shader.Unbind();
+        va.Unbind();
+        vb.Unbind();
+        ib.Unbind();
+        shader.Unbind();
 
-        std::time_t start = std::clock();
         Renderer renderer;
 
         /* Loop until the user closes the window */
@@ -94,10 +100,7 @@ int main()
         {
             /* Render here */
             renderer.Clear();
-            
-            shader.SetUniform4f("u_Color", timeOscillator(start, 4), timeOscillator(start, 5), 1.0f, 1.0f);
             renderer.Draw(va, ib, shader);
-
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
