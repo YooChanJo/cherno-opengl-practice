@@ -1,8 +1,8 @@
 // OpenGL
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <stb_image/stb_image.h>
 
-#include "../includes/stb_image.h"
 #include "../includes/Texture.h"
 
 Texture::Texture(std::string filepath)

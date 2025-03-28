@@ -13,6 +13,7 @@ namespace ProjectConfig {
     std::string customSystemIncludeDirectory[] = {
         "./glfw-3.4.bin.WIN64/include",
         "./glew-2.2.0/include",
+        "./vendor",
     };
     
     std::string predefinedMacros[] = {
@@ -27,7 +28,7 @@ namespace ProjectConfig {
         "VertexArray.cpp",
         "Shader.cpp",
         "Renderer.cpp",
-        "stb_image.cpp",
+        "stb_image_define.cpp",
         "Texture.cpp",
     };
     std::string customLibs[] = {

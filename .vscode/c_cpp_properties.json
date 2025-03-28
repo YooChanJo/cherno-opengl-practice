@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/glfw-3.4.bin.WIN64/include",
-                "${workspaceFolder}/glew-2.2.0/include"
+                "${workspaceFolder}/glew-2.2.0/include",
+                "${workspaceFolder}/vendor"
             ],
             "defines": [
                 "_DEBUG",
