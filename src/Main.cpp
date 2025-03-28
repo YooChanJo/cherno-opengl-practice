@@ -37,8 +37,10 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // needs a vao
 
+    int w_Width = 960, w_Height = 540;
+
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(w_Width, w_Height, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -54,10 +56,10 @@ int main()
     // std::cout << glGetString(GL_VERSION) << std::endl;
     {
         float positions[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f, // 0
-             0.5f, -0.5f, 1.0f, 0.0f, // 1
-             0.5f,  0.5f, 1.0f, 1.0f, // 2
-            -0.5f,  0.5f, 0.0f, 1.0f, // 3
+            100.0f, 100.0f, 0.0f, 0.0f, // 0
+            200.0f, 100.0f, 1.0f, 0.0f, // 1
+            200.0f, 200.0f, 1.0f, 1.0f, // 2
+            100.0f, 200.0f, 0.0f, 1.0f, // 3
         };
 
         unsigned int indices[] = {
@@ -80,7 +82,7 @@ int main()
         Shader shader("./shaders/basic.shader");
         shader.Bind();
 
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        glm::mat4 proj = glm::ortho(0.0f, (float)w_Width, 0.0f, (float)w_Height, -1.0f, 1.0f);
         shader.SetUnifromMat4f("u_MVP", proj);
 
         
