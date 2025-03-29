@@ -28,7 +28,7 @@ namespace ProjectConfig {
     };
 
     SrcDir srcDirectory[] = {
-        { "./src", {} },
+        { "./src", { /* "Main.cpp" */ } },
         { "./vendor/imgui", { "main.cpp" } },
     };
 
