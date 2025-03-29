@@ -83,8 +83,16 @@ int main()
         shader.Bind();
 
         glm::mat4 proj = glm::ortho(0.0f, (float)w_Width, 0.0f, (float)w_Height, -1.0f, 1.0f);
-        shader.SetUnifromMat4f("u_MVP", proj);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+        
+        glm::mat4 mvp = proj * view * model;
 
+        shader.SetUnifromMat4f("u_MVP", mvp);
+
+        glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
+        glm::vec4 result = mvp * vp;
+        std::cout << "Result vec4: < " << result[0] << ", " << result[1] << ", " << result[2] << ", " << result[3] << " >" << std::endl;
         
         Texture texture("./res/textures/broken_violin.jpg");
         texture.Bind(); // binding texture to slot 0

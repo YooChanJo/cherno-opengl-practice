@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <string>
+#include <vector>
 
 namespace ProjectConfig {
     std::string projectDir = "./"; // depends on where the exe is
@@ -18,19 +19,19 @@ namespace ProjectConfig {
     
     std::string predefinedMacros[] = {
         "GLEW_STATIC",
+        "STB_IMAGE_IMPLEMENTATION",
     };
-    
-    std::string cppFiles[] = { // with extension
-        "Main.cpp",
-        "VertexBuffer.cpp",
-        "IndexBuffer.cpp",
-        "VertexBufferLayout.cpp",
-        "VertexArray.cpp",
-        "Shader.cpp",
-        "Renderer.cpp",
-        "stb_image_define.cpp",
-        "Texture.cpp",
+
+    struct SrcDir {
+        std::string dir;
+        std::vector<std::string> excludedFileNames;
     };
+
+    SrcDir srcDirectory[] = {
+        { "./src", {} },
+        { "./vendor/imgui", { "main.cpp" } },
+    };
+
     std::string customLibs[] = {
         "glfw3",
         "glew32",
