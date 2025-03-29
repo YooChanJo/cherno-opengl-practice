@@ -60,6 +60,9 @@
         "cstdarg": "cpp",
         "functional": "cpp",
         "iomanip": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "ratio": "cpp"
     }
 }

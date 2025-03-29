@@ -5,6 +5,9 @@
 // vender
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 // STD Headers
 #include <iostream>
@@ -56,10 +59,10 @@ int main()
     // std::cout << glGetString(GL_VERSION) << std::endl;
     {
         float positions[] = {
-            100.0f, 100.0f, 0.0f, 0.0f, // 0
-            200.0f, 100.0f, 1.0f, 0.0f, // 1
-            200.0f, 200.0f, 1.0f, 1.0f, // 2
-            100.0f, 200.0f, 0.0f, 1.0f, // 3
+            -50.0f, -50.0f, 0.0f, 0.0f, // 0
+             50.0f, -50.0f, 1.0f, 0.0f, // 1
+             50.0f,  50.0f, 1.0f, 1.0f, // 2
+            -50.0f,  50.0f, 0.0f, 1.0f, // 3
         };
 
         unsigned int indices[] = {
@@ -83,16 +86,16 @@ int main()
         shader.Bind();
 
         glm::mat4 proj = glm::ortho(0.0f, (float)w_Width, 0.0f, (float)w_Height, -1.0f, 1.0f);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        // glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
         
-        glm::mat4 mvp = proj * view * model;
+        // glm::mat4 mvp = proj * view * model;
 
-        shader.SetUnifromMat4f("u_MVP", mvp);
+        // shader.SetUnifromMat4f("u_MVP", mvp);
 
-        glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
-        glm::vec4 result = mvp * vp;
-        std::cout << "Result vec4: < " << result[0] << ", " << result[1] << ", " << result[2] << ", " << result[3] << " >" << std::endl;
+        // glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
+        // glm::vec4 result = mvp * vp;
+        // std::cout << "Result vec4: < " << result[0] << ", " << result[1] << ", " << result[2] << ", " << result[3] << " >" << std::endl;
         
         Texture texture("./res/textures/broken_violin.jpg");
         texture.Bind(); // binding texture to slot 0
@@ -104,13 +107,51 @@ int main()
         shader.Unbind();
 
         Renderer renderer;
+        glfwSwapInterval(1);
+
+        glm::vec3 translation(200, 200, 0);
+
+        // imgui init
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+        const char* glsl_version = "#version 130";
+        ImGui_ImplOpenGL3_Init(glsl_version);
+
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+        ImGui::StyleColorsDark();
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
             renderer.Clear();
+
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+            shader.SetUnifromMat4f("u_MVP", mvp);
+
+            // imgui new frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
             renderer.Draw(va, ib, shader);
+            
+            {
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, (float)w_Width); // &translation.x is the whole pointer of struct
+                
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            }
+
+            // imgui render
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -119,6 +160,11 @@ int main()
             glfwPollEvents();
         }
     }
+    // imgui destruction
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    // glfw destruction
     glfwTerminate();
     return 0;
 }
